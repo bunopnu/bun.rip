@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>How Did you Get in There?</title>
+
+    <style>
+      html,
+      body {
+        width: 100vw;
+        height: 100vh;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        background: #111;
+        color: #fff;
+
+        font-family: monospace, sans-serif;
+      }
+
+      div#app {
+        width: 80vw;
+        text-align: center;
+      }
+
+      div#app img {
+        display: block;
+        margin: 50px 0;
+
+        width: 80vw;
+        max-height: 50vh;
+
+        object-fit: contain;
+        image-rendering: pixelated;
+        image-orientation: flip;
+      }
+
+      div#app button {
+        outline: none;
+        border: none;
+
+        padding: 5px 10px;
+
+        background: #fff;
+        color: #000;
+
+        font-family: monospace, sans-serif;
+        font-size: large;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <p id="title"></p>
+      <img id="ff-im" />
+      <button id="show" onclick="show()">Show</button>
+      <button id="shuffle" onclick="shuffle()">Shuffle</button>
+    </div>
+    <script>
+      const REDDIT_API =
+        "https://www.reddit.com/r/FiftyFifty.json?limit=200&sort=new";
+
+      let posts = [];
+
+      const title = document.getElementById("title");
+      const image = document.getElementById("ff-im");
+
+      async function shuffle() {
+        title.innerText = "";
+        image.src = "";
+
+        if (posts.length == 0) {
+          const response = await fetch(REDDIT_API);
+          const body = await response.json();
+
+          posts = body.data.children.filter((post) =>
+            post.data.title.startsWith("[50/")
+          );
+        }
+
+        const selected = posts[Math.floor(Math.random() * posts.length)].data;
+
+        title.innerText = selected.title;
+        image.src = selected.url;
+        image.style = "filter: blur(20px)";
+      }
+
+      function show() {
+        image.style = "";
+      }
+
+      shuffle();
+    </script>
+  </body>
+</html>
